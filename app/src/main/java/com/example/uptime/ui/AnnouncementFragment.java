@@ -19,7 +19,7 @@ import javax.inject.Inject;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
-@AndroidEntryPoint
+// @AndroidEntryPoint
 public class AnnouncementFragment extends Fragment {
     private final String TAG = AnnouncementFragment.class.getSimpleName();
 
@@ -48,7 +48,8 @@ public class AnnouncementFragment extends Fragment {
         viewModel.getBetteruptimeLiveData().observe(getViewLifecycleOwner(), new Observer<Betteruptime>() {
             @Override
             public void onChanged(Betteruptime betteruptime) {
-                System.out.println(TAG + "observe announcement: " + betteruptime.getData().getAttributes().getAnnouncement());
+                binding.textViewAnnouncement.setText(betteruptime.getData().getAttributes().getAnnouncement());
+                // System.out.println(TAG + "observe announcement: " + betteruptime.getData().getAttributes().getAnnouncement());
             }
         });
 

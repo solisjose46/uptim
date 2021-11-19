@@ -1,5 +1,7 @@
 package com.example.uptime.network;
 
+import static com.example.uptime.misc.BetteruptimeConstants.BASE_URL;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
@@ -10,6 +12,8 @@ import javax.inject.Inject;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Repository for AnnouncementViewModel
@@ -20,16 +24,22 @@ import retrofit2.Response;
 
 public class AnnouncementRepository {
     private final String TAG = AnnouncementRepository.class.getSimpleName();
-    @Inject
+
     BetteruptimeApi betteruptimeApi;
-    private MutableLiveData<Betteruptime> betteruptimeMutableLiveData;
+    private MutableLiveData<Betteruptime> betteruptimeMutableLiveData = new MutableLiveData<Betteruptime>();
 
     public LiveData<Betteruptime> getBetteruptimeLiveData(){
         return betteruptimeMutableLiveData;
     }
 
-    // @Inject
-    AnnouncementRepository(){
+    public AnnouncementRepository(){
+        // make betteruptimeApi object here retrofit
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        betteruptimeApi = retrofit.create(BetteruptimeApi.class);
         makeCall();
     }
 

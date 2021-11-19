@@ -7,8 +7,10 @@ import android.os.Bundle;
 import com.example.uptime.R;
 
 import dagger.hilt.android.AndroidEntryPoint;
-
-@AndroidEntryPoint
+/**
+ * Disable Hilt DI for now
+ * **/
+// @AndroidEntryPoint
 public class MainActivity extends AppCompatActivity {
     private final String TAG = MainActivity.class.getSimpleName();
     // get AnnouncementFragment in this fragment

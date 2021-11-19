@@ -12,20 +12,35 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
 
 // @HiltViewModel
 public class AnnouncementViewModel extends ViewModel {
-    // @Inject
-    AnnouncementRepository announcementRepository = new AnnouncementRepository();
-    private LiveData<Betteruptime> betteruptimeLiveData = announcementRepository.getBetteruptimeLiveData();
+    private final String TAG = AnnouncementViewModel.class.getSimpleName();
 
-//    // @Inject
+    AnnouncementRepository announcementRepository;
+    private LiveData<Betteruptime> betteruptimeLiveData;
+
 //    AnnouncementViewModel(){
-//        // super();
+//        announcementRepository  = new AnnouncementRepository();
+//        betteruptimeLiveData = announcementRepository.getBetteruptimeLiveData();
 //    }
 
     public String getAnnouncement(){
-        return betteruptimeLiveData.getValue().getData().getAttributes().getAnnouncement();
+        String announce = "bad";
+        try{
+            return getBetteruptimeLiveData().getValue().getData().getAttributes().getAnnouncement();
+        }
+        catch (Exception e){
+            System.out.println(TAG + ":" + e.getMessage());
+        }
+        return announce;
+        // return betteruptimeLiveData.getValue().getData().getAttributes().getAnnouncement();
     }
 
     public LiveData<Betteruptime> getBetteruptimeLiveData() {
+        if(betteruptimeLiveData == null){
+            if(announcementRepository == null){
+                announcementRepository = new AnnouncementRepository();
+            }
+            betteruptimeLiveData = announcementRepository.getBetteruptimeLiveData();
+        }
         return betteruptimeLiveData;
     }
 }

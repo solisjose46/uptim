@@ -23,11 +23,13 @@ import retrofit2.converter.gson.GsonConverterFactory;
 @Module
 @InstallIn(SingletonComponent.class)
 public class ViewModelModule {
+
     /**
      * If different url is needed than BASE_URL then either:
      * delete the below and create a Retrofitfactory or
      * create qualifiers and create implementations
      * **/
+
     @Provides
     public static Retrofit provideRetrofit(){
         // Create Retrofit instance with our base url

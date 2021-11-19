@@ -16,12 +16,12 @@
         tools:context=".ui.AnnouncementFragment">
 
         <TextView
+            android:id="@+id/textView_announcement"
             android:layout_width="match_parent"
             android:layout_height="36dp"
             android:background="@color/black"
             android:textColor="@color/white"
-            android:textAlignment="center"
-            android:text="@{viewModel.getAnnouncement()}" />
+            android:textAlignment="center" />
 
     </FrameLayout>
 
