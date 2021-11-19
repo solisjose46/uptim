@@ -21,7 +21,9 @@
             android:layout_height="36dp"
             android:background="@color/black"
             android:textColor="@color/white"
-            android:textAlignment="center" />
+            android:onClick="@{()-> viewModel.handleBtnClick()}"
+            android:textAlignment="center"
+             />
 
     </FrameLayout>
 

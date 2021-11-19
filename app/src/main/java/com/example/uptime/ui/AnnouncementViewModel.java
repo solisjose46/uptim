@@ -1,6 +1,9 @@
 package com.example.uptime.ui;
 
+import android.view.View;
+
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.uptime.network.AnnouncementRepository;
@@ -10,37 +13,30 @@ import javax.inject.Inject;
 
 import dagger.hilt.android.lifecycle.HiltViewModel;
 
-// @HiltViewModel
 public class AnnouncementViewModel extends ViewModel {
     private final String TAG = AnnouncementViewModel.class.getSimpleName();
 
-    AnnouncementRepository announcementRepository;
-    private LiveData<Betteruptime> betteruptimeLiveData;
+    // Api call is called when repo is created
+    private MutableLiveData<AnnouncementRepository> announcementRepositoryMutableLiveData = new MutableLiveData<AnnouncementRepository>(new AnnouncementRepository());
+    // AnnouncementRepository announcementRepository
+    private MutableLiveData<Boolean> visible = new MutableLiveData<Boolean>(true);
 
-//    AnnouncementViewModel(){
-//        announcementRepository  = new AnnouncementRepository();
-//        betteruptimeLiveData = announcementRepository.getBetteruptimeLiveData();
-//    }
-
-    public String getAnnouncement(){
-        String announce = "bad";
-        try{
-            return getBetteruptimeLiveData().getValue().getData().getAttributes().getAnnouncement();
+    public void handleBtnClick(){
+        System.out.println(TAG + ": handleClickBtn");
+        if(visible.getValue()){
+            visible.postValue(false);
         }
-        catch (Exception e){
-            System.out.println(TAG + ":" + e.getMessage());
+        else{
+            announcementRepositoryMutableLiveData.postValue(new AnnouncementRepository());
+            visible.postValue(true);
         }
-        return announce;
-        // return betteruptimeLiveData.getValue().getData().getAttributes().getAnnouncement();
     }
 
-    public LiveData<Betteruptime> getBetteruptimeLiveData() {
-        if(betteruptimeLiveData == null){
-            if(announcementRepository == null){
-                announcementRepository = new AnnouncementRepository();
-            }
-            betteruptimeLiveData = announcementRepository.getBetteruptimeLiveData();
-        }
-        return betteruptimeLiveData;
+    public LiveData<AnnouncementRepository> observerRepository(){
+        return announcementRepositoryMutableLiveData;
+    }
+
+    public LiveData<Boolean> isVisible(){
+        return visible;
     }
 }

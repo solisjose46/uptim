@@ -13,17 +13,17 @@ import android.view.ViewGroup;
 
 import com.example.uptime.R;
 import com.example.uptime.databinding.FragmentAnnouncementBinding;
+import com.example.uptime.network.AnnouncementRepository;
 import com.example.uptime.pojo.Betteruptime;
 
 import javax.inject.Inject;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
-// @AndroidEntryPoint
+
 public class AnnouncementFragment extends Fragment {
     private final String TAG = AnnouncementFragment.class.getSimpleName();
 
-    // @Inject
     AnnouncementViewModel viewModel;
     FragmentAnnouncementBinding binding;
 
@@ -42,16 +42,23 @@ public class AnnouncementFragment extends Fragment {
         // data binding set here
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_announcement, container, false);
         // viewModel inject via Hilt! set to binding TODO: fix this and delete below
-        viewModel = new ViewModelProvider(this).get(AnnouncementViewModel.class);
+        viewModel = new ViewModelProvider(getActivity()).get(AnnouncementViewModel.class); // share view model with "BaseActivity"
         binding.setViewModel(viewModel);
 
-        viewModel.getBetteruptimeLiveData().observe(getViewLifecycleOwner(), new Observer<Betteruptime>() {
+        viewModel.observerRepository().observe(getViewLifecycleOwner(), new Observer<AnnouncementRepository>() {
             @Override
-            public void onChanged(Betteruptime betteruptime) {
-                binding.textViewAnnouncement.setText(betteruptime.getData().getAttributes().getAnnouncement());
-                // System.out.println(TAG + "observe announcement: " + betteruptime.getData().getAttributes().getAnnouncement());
+            public void onChanged(AnnouncementRepository announcementRepository) {
+                binding.textViewAnnouncement.setText(announcementRepository.getBetteruptimeLiveData().getValue().getData().getAttributes().getAnnouncement());
             }
         });
+
+//        viewModel.getBetteruptimeLiveData().observe(getViewLifecycleOwner(), new Observer<Betteruptime>() {
+//            @Override
+//            public void onChanged(Betteruptime betteruptime) {
+//                binding.textViewAnnouncement.setText(betteruptime.getData().getAttributes().getAnnouncement());
+//                // System.out.println(TAG + "observe announcement: " + betteruptime.getData().getAttributes().getAnnouncement());
+//            }
+//        });
 
         View view = binding.getRoot();
         return view;
