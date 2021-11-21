@@ -22,4 +22,5 @@ public class Betteruptime {
     public Data getData(){
         return data;
     }
+    public String getAnnouncement(){ return data.getAttributes().getAnnouncement(); }
 }

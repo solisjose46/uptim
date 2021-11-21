@@ -24,26 +24,24 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class AnnouncementRepository {
     private final String TAG = AnnouncementRepository.class.getSimpleName();
+    // responsible for making the call and getting our betteruptime json object
+    private BetteruptimeApi betteruptimeApi;
+    // This live data value will hold our return json object and share to our observers
+    private MutableLiveData<Betteruptime> betteruptimeMutableLiveData;
 
-    BetteruptimeApi betteruptimeApi;
-    private MutableLiveData<Betteruptime> betteruptimeMutableLiveData = new MutableLiveData<Betteruptime>();
-
-    public LiveData<Betteruptime> getBetteruptimeLiveData(){
-        return betteruptimeMutableLiveData;
-    }
-
+    // on creation of repo, make api call to set our mutable live data
     public AnnouncementRepository(){
-        // make betteruptimeApi object here retrofit
+        // make betteruptimeApi object here with retrofit
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
-
+        betteruptimeMutableLiveData = new MutableLiveData<Betteruptime>(null);
         betteruptimeApi = retrofit.create(BetteruptimeApi.class);
         makeCall();
     }
 
-    private void makeCall(){
+    public void makeCall(){
         // call method implemented by retrofit
         Call<Betteruptime> call = betteruptimeApi.getAnnouncement();
         // make the api call
@@ -57,15 +55,20 @@ public class AnnouncementRepository {
                     return;
                 }
                 // Great Succ
-                betteruptimeMutableLiveData.postValue(response.body());
+                betteruptimeMutableLiveData.postValue(response.body()); // extract in viewmodel
                 System.out.println(TAG + " : announcement : " + response.body().getData().getAttributes().getAnnouncement());
             }
 
             @Override
             public void onFailure(Call<Betteruptime> call, Throwable t) {
+                // TODO: need to handle failure and return something like a Betteruptime object with its announcement saying announcement failed or something like that
                 System.out.println(TAG + ": call fail");
             }
         });
     }
-
+    // share to our observers
+    public LiveData<Betteruptime> getBetteruptimeLiveData(){
+        // be careful betteruptime variables can be null, handle this in observers
+        return betteruptimeMutableLiveData;
+    }
 }
