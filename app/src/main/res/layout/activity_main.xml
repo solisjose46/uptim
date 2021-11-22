@@ -25,16 +25,16 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"></FrameLayout>
 
-        <Button
-            android:id="@+id/button_id"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="get Announcement"
-            android:layout_marginTop="36dp"
-            android:onClick="@{()-> viewModel.handleBtnClick()}"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/announcement_fragment" />
+<!--        <Button-->
+<!--            android:id="@+id/button_id"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="get Announcement"-->
+<!--            android:layout_marginTop="36dp"-->
+<!--            android:onClick="@{()-> viewModel.handleBtnClick()}"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/announcement_fragment" />-->
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

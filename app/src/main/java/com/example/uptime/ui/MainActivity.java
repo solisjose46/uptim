@@ -36,7 +36,6 @@ public class MainActivity extends AppCompatActivity {
         binding.setViewModel(viewModel); // remember to bind your ui with viewmodel if using databinding!
         // for creating/removing announcement fragments
         fragmentManager = getSupportFragmentManager();
-        boolean atStart = true;
 
         viewModel.isVisible().observe(this, new Observer<Boolean>() {
             @Override

@@ -23,4 +23,7 @@ public class Betteruptime {
         return data;
     }
     public String getAnnouncement(){ return data.getAttributes().getAnnouncement(); }
+    public String getCreatedAtDate(){
+        return data.getAttributes().getCreatedAtTime();
+    }
 }

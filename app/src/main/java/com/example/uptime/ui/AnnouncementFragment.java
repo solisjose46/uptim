@@ -46,13 +46,13 @@ public class AnnouncementFragment extends Fragment {
         // data binding set here
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_announcement, container, false);
         // getActivity below to share viewModel with base activity
-        viewModel = new ViewModelProvider(getActivity()).get(AnnouncementViewModel.class); // share view model with "BaseActivity"
-        binding.setViewModel(viewModel);
+        viewModel = new ViewModelProvider(getActivity()).get(AnnouncementViewModel.class); // share view model with "BaseActivity" hence the getActivity()
+        binding.setViewModel(viewModel); // remember to bind the layout to the viewmodel
 
         viewModel.getBetteruptimeLiveData().observe(getViewLifecycleOwner(), new Observer<Betteruptime>() {
+            // betteruptime is null because of api call is async so must wait for update, handled here
             @Override
             public void onChanged(Betteruptime betteruptime) {
-
                 if(betteruptime != null) {
                     System.out.println(TAG + "observe announcement: " + betteruptime.getAnnouncement());
                     binding.textViewAnnouncement.setText(betteruptime.getAnnouncement());

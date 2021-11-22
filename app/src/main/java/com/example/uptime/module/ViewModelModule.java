@@ -18,8 +18,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * Implementations for ViewModel dependencies here
  * 11/18/21 Jose Salazar
  * **/
-
-// move to app and make singleton?
+/// install in viewmodel component
 @Module
 @InstallIn(SingletonComponent.class)
 public class ViewModelModule {

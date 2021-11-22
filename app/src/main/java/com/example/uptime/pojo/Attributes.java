@@ -3,7 +3,7 @@ package com.example.uptime.pojo;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * For use with retrofit/gson mappiong. See Data.java
+ * For use with retrofit/gson mapping. See Data.java
  * 11/18/21 Jose Salazar
  * **/
 
