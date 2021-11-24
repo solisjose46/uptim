@@ -16,6 +16,7 @@ public interface BetterDao {
     /**
      * Note: plain old Convenience methods such as Insert, Update, Delete run synchronously
      * Query methods that return a value run asynchronously so handle appropriately
+     * TODO: create appropriate async classes in repository
      * **/
 
     // generic insert into table

@@ -33,7 +33,7 @@ public class AnnouncementViewModel extends ViewModel {
 
     boolean first = true;
 
-    CountDownTimer announcementTimer = new CountDownTimer(30000,1000) {
+    CountDownTimer announcementTimer = new CountDownTimer(10000,1000) {
         public void onTick ( long millisUntilFinished){
             System.out.println("new call in " + millisUntilFinished / 1000);
         }
@@ -41,6 +41,8 @@ public class AnnouncementViewModel extends ViewModel {
         public void onFinish () {
             System.out.println(TAG + "get new call");
             announcementRepository.makeCall(); // checks for announcement
+            // start the timer again
+            announcementTimer.start();
         }
     };
 

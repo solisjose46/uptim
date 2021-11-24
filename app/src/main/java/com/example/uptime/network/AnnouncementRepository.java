@@ -10,8 +10,6 @@ import com.example.uptime.database.BetterDao;
 import com.example.uptime.database.BetterDatabase;
 import com.example.uptime.pojo.Betteruptime;
 
-import javax.inject.Inject;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -19,6 +17,8 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 import static com.example.uptime.UptimeApplication.getStaticContext;
+
+import android.os.AsyncTask;
 
 /**
  * Repository for AnnouncementViewModel
@@ -40,6 +40,7 @@ public class AnnouncementRepository {
     private BetterDao betterDao;
 
     // on creation of repo, make api call to set our mutable live data
+
     public AnnouncementRepository(){
         System.out.println(TAG + "new repo");
         // make betteruptimeApi object here with retrofit
@@ -51,8 +52,11 @@ public class AnnouncementRepository {
         betteruptimeApi = retrofit.create(BetteruptimeApi.class);
         betteruptimeMutableLiveData = new MutableLiveData<Betteruptime>(null);
         betterDao = BetterDatabase.getInstance(getStaticContext()).betterDao();
+        // nuke table just for testing
+        new NukeTableTask(betterDao).execute();
         makeCall(); // our initial call
     }
+
     // API call which fetches announcement
     public void makeCall(){
         // call method implemented by retrofit
@@ -71,7 +75,7 @@ public class AnnouncementRepository {
                 // Great Succ
                 // betteruptimeMutableLiveData.postValue(response.body()); // extract announcement in viewmodel
                 displayAnnouncement(response.body()); // only called when response is 200 so this betteruptime object is never null
-                System.out.println(TAG + " : announcement : " + response.body().getData().getAttributes().getAnnouncement());
+                System.out.println(TAG + ": announcement : " + response.body().getData().getAttributes().getAnnouncement());
             }
 
             @Override
@@ -84,27 +88,41 @@ public class AnnouncementRepository {
     // ! ----- Async task classes for Dao operations here ----- !
     // TODO: make these async classes
 
-    // ----- helper functions -----
+    // 1. check if the entry exists
+    // 2. If true then update betteruptimeMutableLiveData if false do nothing
+    // 3. If 2 true then insert the betteruptimeMutableLiveData
+
+
+
+    // ----- helper functions ----- TODO: move these tasks to the async task
     private void displayAnnouncement(Betteruptime betteruptime){
-        System.out.println(TAG + "displayAnnouncement");
-        if(!entryExists(betteruptime)){
-            betteruptimeMutableLiveData.postValue(betteruptime);
-            insertDB(betteruptime.getCreatedAtDate(), betteruptime.getAnnouncement());
-        }
+        System.out.println(TAG + " displayAnnouncement");
+        // TODO: crashses here.... create the asyctask
+        new FetchAnnouncementTask(betterDao).execute(betteruptime); // runs in background on separate thread
+//        if(!entryExists(betteruptime)){
+//            betteruptimeMutableLiveData.postValue(betteruptime);
+//            // Move this to onPost of FetchAnnouncementTask
+//            insertDB(betteruptime.getCreatedAtDate(), betteruptime.getAnnouncement());
+//        }
     }
-    private void insertDB(String timeStamp, String announcement){
-        System.out.println(TAG + "insertDB");
-        Better better = new Better(timeStamp, announcement);
-        betterDao.insert(better);
-    }
-    private boolean entryExists(Betteruptime betteruptime){
-        System.out.println(TAG + "entryExists");
-        String key = betteruptime.getCreatedAtDate();
-        if(betterDao.getAnnouncement(key) != null){
-            return true;
-        }
-        return false;
-    }
+    // call this to onPost of FetchAnnouncementTask
+//    private void insertDB(String timeStamp, String announcement){
+//        System.out.println(TAG + " insertDB");
+//        Better better = new Better(timeStamp, announcement);
+//        betterDao.insert(better);
+//    }
+//    private boolean entryExists(Betteruptime betteruptime){
+//        System.out.println(TAG + " entryExists");
+//        String key = betteruptime.getCreatedAtDate();
+//        if(betterDao.getAnnouncement(key) != null){
+//            return true;
+//        }
+//        return false;
+//    }
+
+
+
+
     // ----- share to our observers -----
     // For Announcement fragment
     public LiveData<Betteruptime> getBetteruptimeLiveData(){
@@ -112,9 +130,74 @@ public class AnnouncementRepository {
         return betteruptimeMutableLiveData;
     }
     public void userSeen(){
+        System.out.println(TAG + "userSeen");
+        new UpdateSeenTask(betterDao).execute(betteruptimeMutableLiveData.getValue().getCreatedAtDate());
         // updates the current announcement as has been seen so as to not display the same message again
         System.out.println(TAG + "userSeen");
-        String key = betteruptimeMutableLiveData.getValue().getCreatedAtDate();
-        betterDao.setSeen(true, key);
+//        String key = betteruptimeMutableLiveData.getValue().getCreatedAtDate();
+//        betterDao.setSeen(true, key);
     }
+    // ----- Async classes here -----
+    private class FetchAnnouncementTask extends AsyncTask<Betteruptime, Void, Void>{
+        private BetterDao betterDao;
+
+        private FetchAnnouncementTask(BetterDao betterDao){
+            System.out.println(TAG + " " + FetchAnnouncementTask.class.getSimpleName() + " created");
+            this.betterDao = betterDao;
+        }
+
+        @Override
+        protected Void doInBackground(Betteruptime... betteruptimes) {
+            String key = betteruptimes[0].getCreatedAtDate();
+            Betteruptime betteruptime = betteruptimes[0];
+            System.out.println(TAG + " " + FetchAnnouncementTask.class.getSimpleName() + " doing");
+            // TODO: refactor pojo for created at for updated at because it uses the same created at time...
+            if(betterDao.getAnnouncement(key) == null){
+                System.out.println(TAG + " " + FetchAnnouncementTask.class.getSimpleName() + " doing and posting");
+                System.out.println(TAG + " this key is " + key);
+                Better better = new Better(betteruptime.getCreatedAtDate(), betteruptime.getAnnouncement());
+                betteruptimeMutableLiveData.postValue(betteruptime);
+                betterDao.insert(better);
+            }
+            else{
+                // TODO: need to return something
+                System.out.println(TAG + " this key exists " + key);
+            }
+            return null;
+        }
+    }
+
+    private class UpdateSeenTask extends AsyncTask<String, Void, Void>{
+        private BetterDao betterDao;
+
+        private UpdateSeenTask(BetterDao betterDao){
+            this.betterDao = betterDao;
+        }
+
+
+        @Override
+        protected Void doInBackground(String... strings) {
+            String key = strings[0];
+            betterDao.setSeen(true, key);
+            return null;
+        }
+    }
+
+    private class NukeTableTask extends AsyncTask<Void, Void, Void>{
+        private BetterDao betterDao;
+
+        private NukeTableTask(BetterDao betterDao){
+            this.betterDao = betterDao;
+        }
+
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            betterDao.dropBetterTable();
+            return null;
+        }
+    }
+
+
+
 }
