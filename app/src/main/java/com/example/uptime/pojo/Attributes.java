@@ -9,7 +9,7 @@ import com.google.gson.annotations.SerializedName;
 
 public class Attributes {
     private String announcement;
-    @SerializedName("created_at") // renamed. Use this to tell retrofit/gson to map accordingly
+    @SerializedName("updated_at") // renamed. Use this to tell retrofit/gson to map accordingly
     private String createdAtTime;
 
     public String getAnnouncement(){

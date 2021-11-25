@@ -27,10 +27,6 @@ public class AnnouncementViewModel extends ViewModel {
     AnnouncementRepository announcementRepository;
     // observed in 'AnnouncementFragment' for updating ui with announcement
     private LiveData<Betteruptime> betteruptimeLiveData;
-    // observed in 'MainActivity' for tracking if the fragment should be visible
-    private MutableLiveData<Boolean> visible;
-    // updates the status of the fragment: true = should be visible to user, false = should be removed
-
     boolean first = true;
 
     CountDownTimer announcementTimer = new CountDownTimer(10000,1000) {
@@ -46,41 +42,13 @@ public class AnnouncementViewModel extends ViewModel {
         }
     };
 
-    // only need btnClick now for fragment
-    public void handleBtnClick() {
-        System.out.println(TAG + ": handleClickBtn");
-        announcementRepository.userSeen(); // marks the currently displayed announcement has seen by user
-        visible.postValue(false);
+    // expose this to dialog method
+    public void setSeen(){
+        announcementRepository.userSeen();
         if(first){
             announcementTimer.start();
             first = false;
         }
-    }
-
-
-
-    // phase this out for timer
-//    public void handleBtnClick(){
-//        System.out.println(TAG + ": handleClickBtn");
-//        if(visible.getValue()){
-//            announcementRepository.userSeen(); // marks the currently displayed announcement has seen by user
-//            visible.postValue(false);
-//        }
-//        else{
-//            announcementRepository.makeCall(); // make new call to check for any new announcements
-//            // TODO: determine here to display announcement based on if seen or not
-//            visible.postValue(true); // if new announcement then new fragment will contain the new announcement
-//        }
-//    }
-
-
-    // ----- for the observers -----
-    // observed in Main activity: decides if AnnouncementFragment should be visible or not
-    public LiveData<Boolean> isVisible() {
-        if (visible == null) {
-            visible = new MutableLiveData<Boolean>(true); // instantiated with true = will display fragment at MainActivity startup
-        }
-        return visible;
     }
 
     // observed in AnnouncementFragment: updates its text with the announcement
