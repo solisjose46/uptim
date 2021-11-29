@@ -25,9 +25,8 @@ public class AnnouncementViewModel extends ViewModel {
     // for the bugs
     private final String TAG = AnnouncementViewModel.class.getSimpleName();
     AnnouncementRepository announcementRepository;
-    // observed in 'AnnouncementFragment' for updating ui with announcement
+    // observed in 'MainActivity' for updating UI with announcement
     private LiveData<Betteruptime> betteruptimeLiveData;
-    boolean first = true;
 
     CountDownTimer announcementTimer = new CountDownTimer(10000,1000) {
         public void onTick ( long millisUntilFinished){
@@ -45,10 +44,7 @@ public class AnnouncementViewModel extends ViewModel {
     // expose this to dialog method
     public void setSeen(){
         announcementRepository.userSeen();
-        if(first){
-            announcementTimer.start();
-            first = false;
-        }
+        announcementTimer.start();
     }
 
     // observed in AnnouncementFragment: updates its text with the announcement

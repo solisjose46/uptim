@@ -34,74 +34,27 @@ public class AnnouncementFragment extends DialogFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         // data binding set here
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_announcement, container, false);
-        // getActivity below to share viewModel with base activity
         viewModel = new ViewModelProvider(getActivity()).get(AnnouncementViewModel.class); // share view model with "BaseActivity" hence the getActivity()
         binding.setViewModel(viewModel); // remember to bind the layout to the viewmodel
-        binding.textViewAnnouncement.setText(announcement);
+        binding.getViewModel().announcementTimer.cancel(); // Turn off timer since we already have an announcement to display
+        binding.textViewAnnouncement.setText(announcement); // Insert the announcement into text field of the dialog fragment
         View view = binding.getRoot();
         return view;
     }
 
     @Override
     public void onDismiss(@NonNull DialogInterface dialog) {
+        // Whenever user clicks anywhere on the screen outside of the dialog fragment, it will call this method
         super.onDismiss(dialog);
+        // sets this announcement as seen in table and starts the timer
         viewModel.setSeen();
 
     }
 
     public static AnnouncementFragment newInstance(String announcement){
+        // This is to give the activity this fragment is created in a reference to this dialog fragment
         AnnouncementFragment announcementFragment = new AnnouncementFragment();
         announcementFragment.announcement = announcement;
         return announcementFragment;
     }
-
-
-
-    //    private final String TAG = AnnouncementFragment.class.getSimpleName();
-//
-//    AnnouncementViewModel viewModel;
-//    FragmentAnnouncementBinding binding;
-//
-//    public AnnouncementFragment() {
-//        // Required empty public constructor
-//    }
-//
-//    @Override
-//    public void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//    }
-//
-//    @Override
-//    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-//                             Bundle savedInstanceState) {
-//        // data binding set here
-//        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_announcement, container, false);
-//        // getActivity below to share viewModel with base activity
-//        viewModel = new ViewModelProvider(getActivity()).get(AnnouncementViewModel.class); // share view model with "BaseActivity" hence the getActivity()
-//        binding.setViewModel(viewModel); // remember to bind the layout to the viewmodel
-//
-//        viewModel.getBetteruptimeLiveData().observe(getViewLifecycleOwner(), new Observer<Betteruptime>() {
-//            // betteruptime is null because of api call is async so must wait for update, handled here
-//            @Override
-//            public void onChanged(Betteruptime betteruptime) {
-//                if(betteruptime != null) {
-//                    System.out.println(TAG + "observe announcement: " + betteruptime.getAnnouncement());
-//                    binding.textViewAnnouncement.setText(betteruptime.getAnnouncement());
-//                }
-//                else{
-//                    System.out.println(TAG + "observe announcement: is null ...");
-//                    binding.textViewAnnouncement.setText("fetching announcement...");
-//                }
-//            }
-//        });
-//
-//        View view = binding.getRoot();
-//        return view;
-//    }
-//
-//    // TODO: for dialog fragment, on dismiss call: setSeen();
-//
-//    public void setText(String text){
-//        binding.textViewAnnouncement.setText(text);
-//    }
 }

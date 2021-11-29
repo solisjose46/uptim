@@ -12,19 +12,21 @@ import androidx.room.PrimaryKey;
 
 @Entity(tableName = "betteruptime_table")
 public class Better {
+    // Columns for this table
     @NonNull
     @PrimaryKey
     private String createdAtTime; // We will differentiate any announcements by their creation timestamp
     private String announcement;
-    private boolean hasSeen; // false default?
+    private boolean hasSeen;
 
+    // If making new announcement then it has not been seen so default hasSeen is false
     public Better(String createdAtTime, String announcement){
         System.out.println(Better.class.getSimpleName() + " new better");
         this.createdAtTime = createdAtTime;
         this.announcement = announcement;
         this.hasSeen = false; // new announcement has not been seen
     }
-
+    // These getters/setter are used by Room
     public String getCreatedAtTime(){
         return createdAtTime;
     }

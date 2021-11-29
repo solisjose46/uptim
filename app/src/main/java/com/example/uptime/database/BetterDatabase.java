@@ -11,10 +11,11 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 /**
  * This db is for caching betteruptime announcements
  * Schema below
- * ------------
+ * --------------------------------------------------------------------------
  * | String createdAt (primary key) | String announcement | boolean hasSeen |
+ * --------------------------------------------------------------------------
  * **/
-
+// Insert tables for this database in entities = {table_here.class}
 @Database(entities = {Better.class}, version = 1)
 public abstract class BetterDatabase extends RoomDatabase {
     private static final String TAG = BetterDatabase.class.getSimpleName();

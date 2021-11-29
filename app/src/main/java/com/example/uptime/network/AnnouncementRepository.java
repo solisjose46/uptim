@@ -30,10 +30,12 @@ import android.os.AsyncTask;
 public class AnnouncementRepository {
     // for the bugs
     private final String TAG = AnnouncementRepository.class.getSimpleName();
+    // Remote data source
     private BetteruptimeApi betteruptimeApi;
     // This live data value will hold our return json object and share to our observers
     // This observable object contains our announcement
     private MutableLiveData<Betteruptime> betteruptimeMutableLiveData;
+    // Remote data source
     private BetterDao betterDao;
 
     // on creation of repo, make api call to set our mutable live data
@@ -46,10 +48,12 @@ public class AnnouncementRepository {
         betteruptimeApi = retrofit.create(BetteruptimeApi.class);
         betteruptimeMutableLiveData = new MutableLiveData<Betteruptime>(null);
         betterDao = BetterDatabase.getInstance(getStaticContext()).betterDao(); // TODO: get application context in a better way
+
         // ----- nuke table just for testing -----
         System.out.println(TAG + " table Nuked just for testing");
         new NukeTableTask(betterDao).execute();
         // ----- nuke table just for testing -----
+
         makeCall(); // our initial call
     }
 
@@ -66,7 +70,7 @@ public class AnnouncementRepository {
                     System.out.println(TAG + ": " + response.code());
                     return;
                 }
-                // Great Succ, process response for
+                // Great Succ, process response for updating UI
                 System.out.println(TAG + ": announcement : " + response.body().getData().getAttributes().getAnnouncement());
                 displayAnnouncement(response.body()); // only called when response is 200 so this betteruptime object is never null
             }
@@ -78,23 +82,23 @@ public class AnnouncementRepository {
             }
         });
     }
-    // ----- helper functions ----- TODO: move these tasks to the async task
+
+    // ----- helper functions -----
+
     private void displayAnnouncement(Betteruptime betteruptime){
         System.out.println(TAG + " displayAnnouncement");
-        // TODO: crashses here.... create the asyctask
         new FetchAnnouncementTask(betterDao).execute(betteruptime); // runs in background on separate thread
     }
 
     // ----- share to our observers -----
 
     public LiveData<Betteruptime> getBetteruptimeLiveData(){
-        // be careful betteruptime variable can be null, handle this in observers
+        // be careful betteruptimeMutableLiveData can be null, handle this in observers
         return betteruptimeMutableLiveData;
     }
 
     public void userSeen(){
         System.out.println(TAG + " userSeen");
-        // betteruptimeMutableLiveData.postValue(null);
         new UpdateSeenTask(betterDao).execute(betteruptimeMutableLiveData.getValue().getCreatedAtDate());
     }
 
@@ -121,6 +125,7 @@ public class AnnouncementRepository {
                 betterDao.insert(better);
             }
             else{
+                // for debugging
                 System.out.println(TAG + " this key exists " + key);
             }
             return null;
